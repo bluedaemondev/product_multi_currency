@@ -26,7 +26,7 @@
     'website': 'http://www.eynes.com.ar',
     'license': 'AGPL-3',
     "depends": [
-        'purchase','product','point_of_sale'
+        'purchase','product','point_of_sale','web'
     ],
     "data": [
         'views/product_template_views.xml',

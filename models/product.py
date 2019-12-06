@@ -18,7 +18,9 @@
 ##############################################################################
 
 from odoo import fields, models, tools, api
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
@@ -27,6 +29,16 @@ class ProductProduct(models.Model):
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
+
+    pricelist_id = fields.Many2one('product.pricelist',compute='_compute_pricelist_id', store=True)
+
+    @api.onchange('currency_id')
+    @api.depends('currency_id')
+    def _compute_pricelist_id(self):
+        #ars_currency = self.env['res.currency'].search([('name','=','ARS')])
+        for prod in self:
+            prod.pricelist_id = prod.env['product.pricelist'].search([('currency_id','=',prod.currency_id.id)], limit=1)
+            _logger.info('computed pricelist = %s for %s ',prod.pricelist_id.name,prod.name)
 
     @api.model
     def _default_ars_currency(self):

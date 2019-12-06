@@ -9,6 +9,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='list_price']" position="after">
             	<field name="currency_id"/>
+                <field name="pricelist_id"/>
             </xpath>
         </field>
     </record>
