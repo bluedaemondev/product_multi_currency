@@ -16,5 +16,37 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
+import psycopg2
 from . import models  # noqa
+
+def pre_init_hook(cr):
+    """Restore backup of hr_retention_personal_deduction table."""
+    try:
+        cr.execute(
+            """
+            ALTER TABLE product_product
+            ADD pricelist_id INTEGER REFERENCES product_pricelist(id),
+            ADD currency_id INTEGER REFERENCES res_currency(id);
+            ALTER TABLE product_template
+            ADD currency_id INTEGER REFERENCES res_currency(id);
+            """
+        )
+    except psycopg2.ProgrammingError:
+        cr.rollback()
+
+    try:
+        cr.execute(
+            """
+            UPDATE product_product
+            SET pricelist_id = pricelist.id,
+                currency_id = pricelist.currency_id
+            FROM product_template AS ptemplate
+            JOIN product_pricelist AS pricelist ON ptemplate.currency_id = pricelist.currency_id
+            WHERE product_product.product_tmpl_id = ptemplate.id
+            """
+        )
+    except psycopg2.ProgrammingError:
+        cr.rollback()
+
+    return True
+
