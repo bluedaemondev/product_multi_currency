@@ -17,18 +17,13 @@
 #
 ##############################################################################
 
-{
-    'name': "Product & Partner default None Company",
-    'version': '11.0.1.0.1',
-    'category': 'Others',
-    'description': "Product & Partner related customizations for Macro.",
-    'author': 'Eynes - Ingenieria del software',
-    'website': 'http://www.eynes.com.ar',
-    'license': 'AGPL-3',
-    "depends": [
-        'base','product'
-    ],
-    "data": [
-    ],
-    "installable": True,
-}
+from odoo import fields, models, tools, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    company_id = fields.Many2one('res.company',copy=True, default=None, store=True, readonly=False, selectable=True, ondelete='set null')
+
