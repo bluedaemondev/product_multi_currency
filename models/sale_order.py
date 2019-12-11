@@ -19,29 +19,28 @@
 
 from odoo import fields, models, tools, api
 import logging
+import pdb
 
 _logger = logging.getLogger(__name__)
 
 class ProductProduct(models.Model):
-    _inherit = 'product.product'
+    _inherit = 'sale.order'
 
-    currency_id = fields.Many2one('res.currency', readonly=False, store=True, required=True)
+    @api.onchange('order_line')
+    def _compute_new_total_on_company_currency(self):
+        
+        company_curr = self.company_id.currency_id
 
-    @api.depends('currency_id')
-    def _compute_pricelist_id(self):
-        #ars_currency = self.env['res.currency'].search([('name','=','ARS')])
-        for prod in self:
-            prod.pricelist_id = prod.env['product.pricelist'].search([('currency_id','=',prod.currency_id.id)], limit=1)
-            _logger.info('computed pricelist = %s for %s ',prod.pricelist_id.name,prod.name)
-            
-    pricelist_id = fields.Many2one('product.pricelist',compute='_compute_pricelist_id', store=True)
-
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
-    @api.model
-    def _default_ars_currency(self):
-        return self.env['res.currency'].search([('name','=','ARS')], limit=1)
-
-    currency_id = fields.Many2one('res.currency', readonly=False, default=_default_ars_currency, store=True)
+        for so in self:
+            for soli in so.order_line:
+                pdb.set_trace()
+                if soli.product_id.currency_id.id != company_curr.id and\
+                    soli.product_id.currency_id:
+                    rate = soli.product_id.currency_id.rate
+                    _logger.info('Ratio de = %s',rate)
+                    list_price_rated = rate * soli.product_id.list_price
+                    list_price_rated = company_curr.round(list_price_rated)
+                    soli.price_unit = list_price_rated
+                else:
+                    _logger.info('order line %s has no currency, or price actualization has been already done.',soli.name)
 

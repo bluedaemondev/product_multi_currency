@@ -18,3 +18,4 @@
 ##############################################################################
 
 from . import product  # noqa
+from . import sale_order  # noqa

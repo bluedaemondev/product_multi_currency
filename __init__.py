@@ -38,11 +38,8 @@ def pre_init_hook(cr):
         cr.execute(
             """
             UPDATE product_product
-            SET pricelist_id = pricelist.id,
-                currency_id = pricelist.currency_id
-            FROM product_template AS ptemplate
-            JOIN product_pricelist AS pricelist ON ptemplate.currency_id = pricelist.currency_id
-            WHERE product_product.product_tmpl_id = ptemplate.id
+            SET pricelist_id = 1,
+                currency_id = 20
             """
         )
     except psycopg2.ProgrammingError:
