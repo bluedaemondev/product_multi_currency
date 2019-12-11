@@ -18,17 +18,20 @@
 ##############################################################################
 
 {
-    'name': "Product & Partner default None Company",
-    'version': '11.0.1.0.1',
-    'category': 'Others',
-    'description': "Product & Partner related customizations for Macro.",
+    'name': "Multi currency for product_product",
+    'version': '11.0.1.0.2',
+    'category': 'Products',
+    'description': "Product related customizations for Macro.",
     'author': 'Eynes - Ingenieria del software',
     'website': 'http://www.eynes.com.ar',
     'license': 'AGPL-3',
     "depends": [
-        'base','product'
+        'purchase','product','point_of_sale','web'
     ],
     "data": [
+        'views/product_views.xml',
+        'views/templates.xml',
     ],
     "installable": True,
+    "pre_init_hook": "pre_init_hook"
 }

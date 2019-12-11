@@ -17,5 +17,4 @@
 #
 ##############################################################################
 
-from . import res_partner  # noqa
 from . import product  # noqa
